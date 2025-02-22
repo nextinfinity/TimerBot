@@ -19,24 +19,24 @@ public class Timer extends Command {
 
 	public Timer() {
 		super(
-				"timer",
-				"Sets a timer for the specified time. Will pull users back to channel at end if specified.",
-				List.of(
-					new OptionData(OptionType.STRING, "name", "Name for the timer")
-							.setRequired(true),
-					new OptionData(OptionType.CHANNEL, "text-channel", "Text channel to post timer in")
-							.setRequired(true).setChannelTypes(ChannelType.TEXT),
-					new OptionData(OptionType.INTEGER, "length", "The length of the timer, in minute")
-							.setRequired(true).setMinValue(0),
-					new OptionData(OptionType.INTEGER, "notify-interval", "How often to post separate update notifications, in minutes")
-							.setRequired(false).setMinValue(0),
-					new OptionData(OptionType.BOOLEAN, "one-minute-warning", "Whether or not to notify with one minute remaining")
-							.setRequired(false),
-					new OptionData(OptionType.MENTIONABLE, "notify-mention", "Who to mention for updates")
-							.setRequired(false),
-					new OptionData(OptionType.CHANNEL, "return-voice-channel", "Channel to send all voice users to when the timer completes")
-							.setRequired(false).setChannelTypes(ChannelType.VOICE)
-				)
+			"timer",
+			"Sets a timer for the specified time. Will pull users back to channel at end if specified.",
+			List.of(
+				new OptionData(OptionType.STRING, "name", "Name for the timer")
+					.setRequired(true),
+				new OptionData(OptionType.CHANNEL, "text-channel", "Text channel to post timer in")
+					.setRequired(true).setChannelTypes(ChannelType.TEXT),
+				new OptionData(OptionType.INTEGER, "length", "The length of the timer, in minute")
+					.setRequired(true).setMinValue(0),
+				new OptionData(OptionType.INTEGER, "notify-interval", "How often to post separate update notifications, in minutes")
+					.setRequired(false).setMinValue(0),
+				new OptionData(OptionType.BOOLEAN, "one-minute-warning", "Whether or not to notify with one minute remaining")
+					.setRequired(false),
+				new OptionData(OptionType.MENTIONABLE, "notify-mention", "Who to mention for updates")
+					.setRequired(false),
+				new OptionData(OptionType.CHANNEL, "return-voice-channel", "Channel to send all voice users to when the timer completes")
+					.setRequired(false).setChannelTypes(ChannelType.VOICE)
+			)
 		);
 	}
 

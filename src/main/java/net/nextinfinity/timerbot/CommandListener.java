@@ -27,13 +27,13 @@ public class CommandListener extends ListenerAdapter {
 		CommandListUpdateAction commandListUpdateAction = jda.updateCommands();
 
 		for (Class<?> commandClass : commandClasses) {
-            try {
+			try {
 				Command command = commandClass.asSubclass(Command.class).getConstructor().newInstance();
 				commandListUpdateAction = commandListUpdateAction.addCommands(Commands.slash(command.getName(), command.getDescription()).addOptions(command.getOptions()));
 				commands.put(command.getName(), command);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 		}
 
 		commandListUpdateAction.queue();
