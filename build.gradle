@@ -1,0 +1,27 @@
+plugins {
+    id "com.github.johnrengelman.shadow" version "8.1.1"
+    id "io.freefair.lombok" version "8.3"
+}
+
+apply plugin: 'java'
+version = '1.0.0'
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'net.nextinfinity.timerbot.TimerBot'
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+    maven { url  "https://maven.lavalink.dev/releases" }
+    jcenter()
+}
+
+dependencies {
+    implementation group: 'net.dv8tion', name: 'JDA', version: '5.1.2'
+    implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
+
+    runtimeOnly group: 'org.slf4j', name: 'slf4j-reload4j', version: '2.0.13'
+}
