@@ -1,6 +1,7 @@
 package net.nextinfinity.timerbot.commands;
 
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -42,6 +43,7 @@ public class Timer extends Command {
 
 	public void execute(SlashCommandInteractionEvent event) {
 		// Required parameters
+
 		final String timerName = Objects.requireNonNull(event.getOption("name")).getAsString();
 		final TextChannel textChannel = Objects.requireNonNull(event.getOption("text-channel")).getAsChannel().asTextChannel();
 		final long timerLength = Objects.requireNonNull(event.getOption("length")).getAsLong();
@@ -91,7 +93,8 @@ public class Timer extends Command {
 			if (voiceChannel != null) {
 				final Guild guild = voiceChannel.getGuild();
 				for (Member member : voiceChannel.getGuild().getMembers()) {
-					if (member.getVoiceState().inAudioChannel()) {
+					GuildVoiceState memberVoiceState = Objects.requireNonNull(member.getVoiceState());
+					if (memberVoiceState.inAudioChannel()) {
 						guild.moveVoiceMember(member, voiceChannel).queueAfter(3, TimeUnit.SECONDS);
 					}
 				}

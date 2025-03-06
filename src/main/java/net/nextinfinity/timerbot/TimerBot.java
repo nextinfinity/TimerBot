@@ -9,25 +9,20 @@ import java.util.Collections;
 
 @Value
 public class TimerBot {
-	JDA jda;
-	static TimerBot instance;
 
 	public static void main(String[] args) {
-		instance = new TimerBot();
-	}
-
-	TimerBot() {
 		try {
 			CommandListener listener = new CommandListener();
-			this.jda = JDABuilder.createDefault(System.getenv("DISCORD_BOT_TOKEN"),
+			JDA bot = JDABuilder.createDefault(System.getenv("DISCORD_BOT_TOKEN"),
 							Collections.singletonList(GatewayIntent.GUILD_VOICE_STATES))
 					.addEventListeners(listener)
 					.build();
-			listener.registerCommands(jda);
+			listener.registerCommands(bot);
 		} catch (Exception exception) {
 			InstantiationError error = new InstantiationError("Failed to load TimerBot.");
 			error.setStackTrace(exception.getStackTrace());
 			throw error;
 		}
 	}
+
 }

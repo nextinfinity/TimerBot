@@ -9,6 +9,7 @@ import org.reflections.Reflections;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.reflections.scanners.Scanners.SubTypes;
@@ -41,11 +42,10 @@ public class CommandListener extends ListenerAdapter {
 
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-		Command command = commands.get(event.getName());
-		if (command != null) {
-			event.deferReply().queue();
-			command.execute(event);
-		}
+		// We should not be able to receive an event for a command that is not registered
+		Command command = Objects.requireNonNull(commands.get(event.getName()));
+		event.deferReply().queue();
+		command.execute(event);
 	}
 
 }
