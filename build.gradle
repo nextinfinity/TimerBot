@@ -1,10 +1,24 @@
 plugins {
-    id "com.gradleup.shadow" version "8.3.6"
-    id "io.freefair.lombok" version "8.12.2.1"
+    id "com.gradleup.shadow" version "9.6.1"
+    id "io.freefair.lombok" version "9.5.0"
 }
 
 apply plugin: 'java'
 version = '1.0.0'
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(25) }
+}
+
+shadowJar {
+    filesMatching('META-INF/*.kotlin_module') {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+    mergeServiceFiles()
+    filesMatching('META-INF/services/**') {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+}
 
 jar {
     manifest {
@@ -17,8 +31,8 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'net.dv8tion', name: 'JDA', version: '5.3.0'
-    implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
+    implementation 'net.dv8tion:JDA:6.6.0'
+    implementation 'org.reflections:reflections:0.10.2'
 
-    runtimeOnly group: 'org.slf4j', name: 'slf4j-reload4j', version: '2.0.17'
+    runtimeOnly 'org.slf4j:slf4j-reload4j:2.0.19'
 }
