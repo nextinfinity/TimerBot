@@ -19,12 +19,6 @@ Create a Discord application/bot and invite it with the `bot` and `applications.
 docker run -d --name timerbot --restart unless-stopped -e DISCORD_BOT_TOKEN="{YOUR BOT TOKEN}" ghcr.io/nextinfinity/timerbot:main
 ```
 
-## Release versioning
-
-Publish a GitHub release with a tag such as `v1.1.0`. The workflow strips the leading `v` and passes the version through Docker's `APP_VERSION` build argument to Gradle's `appVersion` property. The JAR filename and `Implementation-Version` manifest entry then use `1.1.0`; no manual Gradle version bump is needed. Tags without `v` and prerelease suffixes (e.g. `1.1.0-rc.1`) also work.
-
-Local, branch/PR, and manual workflow builds default to `0.0.0-SNAPSHOT`, including manual runs on tags. Override locally with `./gradlew clean shadowJar -PappVersion=1.1.0` or `docker build --build-arg APP_VERSION=1.1.0 -t timerbot:1.1.0 .`. Image tagging is unchanged; only published non-prereleases update `latest`.
-
 ## Build locally
 
 Requires JDK 25.
