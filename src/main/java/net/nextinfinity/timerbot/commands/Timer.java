@@ -28,9 +28,9 @@ public class Timer extends Command {
 				new OptionData(OptionType.CHANNEL, "text-channel", "Text channel to post timer in")
 					.setRequired(true).setChannelTypes(ChannelType.TEXT),
 				new OptionData(OptionType.INTEGER, "length", "The length of the timer, in minute")
-					.setRequired(true).setMinValue(0),
+					.setRequired(true).setMinValue(1),
 				new OptionData(OptionType.INTEGER, "notify-interval", "How often to post separate update notifications, in minutes")
-					.setRequired(false).setMinValue(0),
+					.setRequired(false).setMinValue(1),
 				new OptionData(OptionType.BOOLEAN, "one-minute-warning", "Whether or not to notify with one minute remaining")
 					.setRequired(false),
 				new OptionData(OptionType.MENTIONABLE, "notify-mention", "Who to mention for updates")
@@ -42,6 +42,11 @@ public class Timer extends Command {
 	}
 
 	public void execute(SlashCommandInteractionEvent event) {
+		if (!event.isFromGuild()) {
+			event.getHook().editOriginal("Timers can only be created in a server.").queue();
+			return;
+		}
+
 		// Required parameters
 
 		final String timerName = Objects.requireNonNull(event.getOption("name")).getAsString();
