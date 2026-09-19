@@ -16,7 +16,7 @@ Use `/timer` with the following parameters:
 Create a Discord application/bot and invite it with the `bot` and `applications.commands` scopes. Grant View Channels and Send Messages in the target text channel. Voice return additionally needs Move Members and access to the destination voice channel. Mentioning roles may require mention permissions. No privileged gateway intents are required. Then start the bot by running:
 
 ```sh
-docker run -d --name timerbot --restart unless-stopped -e DISCORD_BOT_TOKEN="{YOUR BOT TOKEN}" ghcr.io/nextinfinity/timerbot:main
+docker run -d --name timerbot --restart unless-stopped -e DISCORD_BOT_TOKEN="{YOUR BOT TOKEN}" ghcr.io/nextinfinity/timerbot:latest
 ```
 
 ## Build locally
