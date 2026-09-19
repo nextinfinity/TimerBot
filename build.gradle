@@ -4,7 +4,10 @@ plugins {
 }
 
 apply plugin: 'java'
-version = '1.0.0'
+version = providers.gradleProperty('appVersion').orElse('0.0.0-SNAPSHOT').get()
+if (!(version.toString() ==~ /[0-9A-Za-z][0-9A-Za-z.+_-]*/)) {
+    throw new GradleException('appVersion must contain only letters, digits, dots, plus signs, underscores, or hyphens, and start with a letter or digit.')
+}
 
 java {
     toolchain { languageVersion = JavaLanguageVersion.of(25) }
@@ -22,7 +25,8 @@ shadowJar {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'net.nextinfinity.timerbot.TimerBot'
+        attributes 'Main-Class': 'net.nextinfinity.timerbot.TimerBot',
+                'Implementation-Version': project.version.toString()
     }
 }
 
