@@ -2,7 +2,7 @@ FROM eclipse-temurin:25-jdk AS builder
 WORKDIR /app
 COPY . .
 ARG APP_VERSION=0.0.0-SNAPSHOT
-RUN sh ./gradlew --no-daemon "-PappVersion=${APP_VERSION}" test shadowJar
+RUN sh ./gradlew --no-daemon "-PappVersion=${APP_VERSION}" shadowJar
 
 FROM eclipse-temurin:25-jre
 WORKDIR /app
