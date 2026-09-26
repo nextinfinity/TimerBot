@@ -21,9 +21,7 @@ docker run -d --name timerbot --restart unless-stopped -e DISCORD_BOT_TOKEN="{YO
 
 ## Healthcheck
 
-The bot serves `http://127.0.0.1:8080/health` (loopback only; no port publishing needed), returning HTTP 200 only while JDA reports its Discord gateway as `CONNECTED`, and 503 otherwise. This checks the running bot's connection, not just its process; it does not check voice connections or REST API availability separately.
-
-Docker probes every 30 seconds, allows 60 seconds for startup, and marks the container unhealthy after three consecutive failures. JDA handles reconnects; health recovers automatically when connected again. Docker health status alone does not trigger a restart, even with a restart policy. Inspect it with `docker inspect --format '{{json .State.Health}}' timerbot`.
+The Docker image includes a healthcheck that polls JDA's Discord connection state, checking that the bot is connected rather than just running.
 
 ## Build locally
 
