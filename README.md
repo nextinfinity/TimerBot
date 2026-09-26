@@ -19,6 +19,10 @@ Create a Discord application/bot and invite it with the `bot` and `applications.
 docker run -d --name timerbot --restart unless-stopped -e DISCORD_BOT_TOKEN="{YOUR BOT TOKEN}" ghcr.io/nextinfinity/timerbot:latest
 ```
 
+## Healthcheck
+
+The Docker image includes a healthcheck that polls JDA's Discord connection state, checking that the bot is connected rather than just running.
+
 ## Build locally
 
 Requires JDK 25.

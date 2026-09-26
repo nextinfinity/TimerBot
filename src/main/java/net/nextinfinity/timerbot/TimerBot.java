@@ -18,6 +18,7 @@ public class TimerBot {
 					.addEventListeners(listener)
 					.build();
 			listener.registerCommands(bot);
+			HealthCheck.start(bot);
 		} catch (Exception exception) {
 			InstantiationError error = new InstantiationError("Failed to load TimerBot.");
 			error.setStackTrace(exception.getStackTrace());
