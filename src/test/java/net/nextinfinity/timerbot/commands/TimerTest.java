@@ -15,6 +15,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -23,9 +25,9 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class TimerTest {
-    private record Notice(String text, long minutes) {}
+    private record Notice(String text, long minutes, MessageCreateAction action) {}
     private final List<Notice> notices = new ArrayList<>();
-    private Consumer<Message> completion;
+    private final Map<MessageCreateAction, Consumer<Message>> callbacks = new HashMap<>();
     private final TextChannel channel = mock(TextChannel.class);
     private final SlashCommandInteractionEvent event = mock(SlashCommandInteractionEvent.class, RETURNS_DEEP_STUBS);
 
@@ -42,13 +44,13 @@ class TimerTest {
         when(channel.sendMessage(anyString())).thenAnswer(invocation -> {
             String text = invocation.getArgument(0);
             MessageCreateAction action = mock(MessageCreateAction.class, RETURNS_SELF);
-            doAnswer(ignored -> { notices.add(new Notice(text, 0)); return null; }).when(action).queue();
+            doAnswer(ignored -> { notices.add(new Notice(text, 0, action)); return null; }).when(action).queue();
             when(action.queueAfter(anyLong(), eq(TimeUnit.MINUTES))).thenAnswer(call -> {
-                notices.add(new Notice(text, call.getArgument(0)));
+                notices.add(new Notice(text, call.getArgument(0), action));
                 return null;
             });
             when(action.onSuccess(any())).thenAnswer(call -> {
-                completion = call.getArgument(0);
+                callbacks.put(action, call.getArgument(0));
                 return action;
             });
             return action;
@@ -64,27 +66,25 @@ class TimerTest {
     }, delimiter = '|', nullValues = "null")
     void schedulesOnlyIntendedNotices(long length, Long interval, boolean warning, String expected) {
         prepare(length, interval, warning);
+        OptionMapping mention = mock(OptionMapping.class, RETURNS_DEEP_STUBS);
+        when(mention.getAsMentionable().getAsMention()).thenReturn("<@123>");
+        when(event.getOption("notify-mention")).thenReturn(mention);
         new Timer().execute(event);
+        assertTrue(notices.stream().allMatch(n -> n.text().startsWith("<@123> ")));
         assertEquals(expected, String.join(",", notices.stream().map(n -> Long.toString(n.minutes())).toList()));
         for (Notice notice : notices.subList(1, notices.size() - 1)) {
             long remaining = length - notice.minutes();
             assertTrue(notice.text().contains(remaining == 1 ? "***1*** minute" : "**" + remaining + "** minutes"));
         }
-        assertTrue(notices.getLast().text().contains("complete"));
-        assertNotNull(completion);
-        completion.accept(mock(Message.class)); // No destination is a valid completion path.
+        complete(length); // No destination is a valid completion path.
     }
 
     @Test
-    void omittedOptionalSettingsUseDefaultsAndMentionsApplyToEveryNotice() {
+    void omittedOptionalSettingsUseDefaults() {
         prepare(3, null, false);
         when(event.getOption("one-minute-warning")).thenReturn(null);
-        OptionMapping mention = mock(OptionMapping.class, RETURNS_DEEP_STUBS);
-        when(mention.getAsMentionable().getAsMention()).thenReturn("<@123>");
-        when(event.getOption("notify-mention")).thenReturn(mention);
         new Timer().execute(event);
         assertEquals(List.of(0L, 3L), notices.stream().map(Notice::minutes).toList());
-        assertTrue(notices.stream().allMatch(n -> n.text().startsWith("<@123> ")));
     }
 
     @Test
@@ -101,7 +101,7 @@ class TimerTest {
         Member connected = member(true);
         Member disconnected = member(false);
         when(guild.getMembers()).thenReturn(List.of(connected, disconnected));
-        completion.accept(mock(Message.class));
+        complete(5);
         verify(guild.moveVoiceMember(connected, destination)).queueAfter(3, TimeUnit.SECONDS);
         verify(guild, never()).moveVoiceMember(disconnected, destination);
     }
@@ -112,6 +112,16 @@ class TimerTest {
         new Timer().execute(event);
         verify(event, never()).getOption(anyString());
         verifyNoInteractions(channel);
+    }
+
+    private void complete(long length) {
+        Notice last = notices.getLast();
+        assertEquals(length, last.minutes());
+        assertTrue(last.text().contains("complete"));
+        assertEquals(1, callbacks.size(), "Only the completion notice should have a callback");
+        Consumer<Message> completion = callbacks.get(last.action());
+        assertNotNull(completion, "Voice return must be attached to the completion notice");
+        completion.accept(mock(Message.class));
     }
 
     private static Member member(boolean inVoice) {
