@@ -23,6 +23,18 @@ docker run -d --name timerbot --restart unless-stopped -e DISCORD_BOT_TOKEN="{YO
 
 The Docker image includes a healthcheck that polls JDA's Discord connection state, checking that the bot is connected rather than just running.
 
+## Dependency security updates
+
+JDA brings in Jackson transitively. `build.gradle` declares a Jackson BOM so
+Dependabot can track its version explicitly and keep the Jackson modules aligned.
+Newer upstream versions can still win resolution. TimerBot does not bring in
+Lavaplayer's Commons IO, jsoup, or Rhino dependencies.
+
+After updates, run `./gradlew clean check shadowJar` and inspect
+`./gradlew dependencies --configuration runtimeClasspath`. Dependabot version
+updates are configured in `.github/dependabot.yml`; repository-level Dependabot
+alerts/security updates must be enabled separately in GitHub settings.
+
 ## Tests
 
 Run `./gradlew test` with JDK 25. See [testing guidance](TESTING.md) for scope and conventions.

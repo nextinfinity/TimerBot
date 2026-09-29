@@ -50,6 +50,9 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:5.23.0'
     mockitoAgent('org.mockito:mockito-core:5.23.0') { transitive = false }
 
+    // Keep JDA's transitive Jackson modules aligned and explicitly updateable.
+    implementation platform('com.fasterxml.jackson:jackson-bom:2.22.3')
+
     implementation 'net.dv8tion:JDA:6.6.0'
     implementation 'org.reflections:reflections:0.10.2'
 
